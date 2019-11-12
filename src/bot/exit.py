@@ -7,6 +7,6 @@ def setupSubCommand(subparser: argparse._SubParsersAction):
     parser.set_defaults(handler=exit)
 
 
-async def exit(args, client, message: discord.message.Message):
+async def exitcmd(args, client, message: discord.message.Message):
     await message.channel.send('+OK, See you.')
     await client.close()
