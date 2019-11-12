@@ -1,0 +1,20 @@
+{
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length",
+        "1000"
+    ],
+    "python.formatting.autopep8Args": [
+        "--ignore",
+        "E70",
+        "--max-line-length",
+        "1000",
+    ],
+    "editor.formatOnSave": true,
+    "python.pythonPath": "w:\\Works\\Programming\\lb\\vemt\\vemt-bot-python\\vemt\\Scripts\\python.exe",
+    "files.exclude": {
+        "vemt/": true,
+        "**/__pycache__/": true
+    }
+}
