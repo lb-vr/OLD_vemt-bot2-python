@@ -3,12 +3,15 @@ import logging
 
 from src.setup_log import setupLogger
 from src.client import VemtClient
-
+from src.bot.add_processor import addProcessors
 
 if __name__ == '__main__':
 
     # setup logger
-    # logger = setupLogger("vemt", stdout_level=logging.INFO, logfile_level=logging.DEBUG)
+    logger = setupLogger("vemt", stdout_level=logging.INFO, logfile_level=logging.DEBUG)
+
+    # setup processor
+    addProcessors()
 
     # TODO: ここに説明を書く
     parser = argparse.ArgumentParser()
