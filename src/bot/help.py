@@ -13,12 +13,14 @@ from .processor_base import ProcessorBase, ProcessorError, AuthenticationError
 
 class HelpProcess(ProcessorBase):
     __logger = logging.getLogger("HelpProcess")
+    parser = None
 
     @classmethod
     def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
-        parser = subparser.add_parser("+help", help="BOTヘルプを表示します")
-        parser.set_defaults(handler=HelpProcess)
-        parser.set_defaults(show_help=True)
+        cls.parser = subparser.add_parser("+help", help="BOTヘルプを表示します", add_help=False)
+        cls.parser.add_argument("-h", "--help", action="store_true", dest="help_on_help")
+        cls.parser.set_defaults(handler=HelpProcess)
+        cls.parser.set_defaults(show_help=True)
 
     @classmethod
     async def authenticate(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
@@ -26,7 +28,8 @@ class HelpProcess(ProcessorBase):
 
     @classmethod
     async def run(cls, args, client, message: discord.Message) -> NoReturn:
-        pass  # ここに処理は来ない。
+        await message.channel.send("ヘルプのヘルプ…:thinking_face:\n"
+                                   + "もし何か困りごとがあれば、開発者の<@!462643174087720971>に聞いてみてね！")
 
     @classmethod
     def addProcessor(cls):

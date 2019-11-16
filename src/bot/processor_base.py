@@ -41,14 +41,15 @@ class ProcessorError(Exception):
 
 class MyArgumentParser(argparse.ArgumentParser):
     def error(self, message):
-        print(message)
-        print(sys.exc_info())
-        exc = sys.exc_info()[1]
-        raise ArgError(exc)
+        raise ArgError(message)
 
     def _print_message(self, message, file=None):
         if message:
-            #print(message, file=sys.stderr)
+            message = message \
+                .replace("usage:", "使い方:") \
+                .replace("positional arguments:", "引数:") \
+                .replace("optional arguments:", "省略可能な引数:") \
+                .replace("show this help message and exit", "このヘルプを表示します")
             raise ShowHelp(message)
 
 

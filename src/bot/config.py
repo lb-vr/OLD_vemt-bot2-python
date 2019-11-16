@@ -23,7 +23,7 @@ class ConfigProcess(ProcessorBase):
         subp = cls.parser.add_subparsers(parser_class=MyArgumentParser)
 
         # -- questionのsubparser
-        parser_question = subp.add_parser("question", help="質問関連の設定", add_help=False)
+        parser_question = subp.add_parser("question", help="質問関連の設定")
         subp_question = parser_question.add_subparsers(parser_class=MyArgumentParser)
 
         # +config question upload
@@ -32,7 +32,9 @@ class ConfigProcess(ProcessorBase):
         parser_question_upload.set_defaults(proc=cls.uploadQuestion)
 
         # +config question add
-        parser_question_add = subp_question.add_parser("add", help="任意回答の質問を末尾に追加します")
+        parser_question_add = subp_question.add_parser("add",
+                                                       help="任意回答の質問を末尾に追加します",
+                                                       description="新しい質問を、既存の質問の末尾に追加します。\n追加できる質問はすべて**任意回答**となります。")
         parser_question_add.add_argument("text", type=str, help="簡潔な質問文")
         parser_question_add.add_argument("--details", nargs="+", type=str, help="質問文の補足などを行います。行ごとに空白で区切ってください。")
         parser_question_add.add_argument("--type", type=str, default="string", choices=["string", "number", "picture", "regex", "json"], help="期待する回答の種類を指定します")

@@ -14,7 +14,7 @@ class ResetProcess(ProcessorBase):
 
     @classmethod
     def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
-        parser = subparser.add_parser("+reset", help="Discordサーバーを初期化します")
+        parser = subparser.add_parser("+reset", help="【BOT開発専用】Discordサーバーをもとの状態に戻します", add_help=False)
         parser.set_defaults(handler=ResetProcess)
 
     @classmethod

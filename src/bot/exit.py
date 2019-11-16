@@ -8,7 +8,8 @@ class ExitProcess:
     @classmethod
     def setupSubCommand(cls, subparser: argparse._SubParsersAction):
         parser = subparser.add_parser("+exit",
-                                      help="BOTを終了します（開発時専用コマンドです）")
+                                      help="【BOT開発専用】BOTを終了します",
+                                      add_help=False)
         parser.set_defaults(handler=ExitProcess)
 
     @classmethod

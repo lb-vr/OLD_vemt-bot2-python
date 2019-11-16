@@ -14,7 +14,7 @@ class VemtClient(discord.Client):
         + "Discordのメッセージとしてコマンドを入力し、送信することで解釈を行います。 \n"
         + "コマンドによっては、権限によって制限されたものや、チャンネルが決まっています。\n",
         epilog="それぞれのコマンドについて詳しく知るには、`+<コマンド> --help`で見ることが可能です。",
-        add_help=True)
+        add_help=False)
     __subparser = None
 
     @classmethod
@@ -31,19 +31,20 @@ class VemtClient(discord.Client):
 
     async def on_message(self, message: discord.Message):
         logger = logging.getLogger()
-        logger.debug('Message from {0.author}: {0.content}'.format(message))
 
         if (not message.author.bot and message.content.startswith("+")):
+            logger.debug('Message from {0.author} ({0.author.id}): {0.content}'.format(message))
             try:
                 args = VemtClient.__parser.parse_args(message.content.split())
+                logger.debug("arguments : %s", args)
 
                 if hasattr(args, "handler"):
                     processor: ProcessorBase = args.handler()
                     await processor.authenticate(args, self, message)
                     if hasattr(args, "help") and args.help and hasattr(processor, "parser"):
                         await message.channel.send(processor.parser.format_help())
-                    elif hasattr(args, "show_help"):
-                        await message.channel.send(VemtClient.__parser.format_help())
+                    elif hasattr(args, "show_help") and not hasattr(args, "help_on_help"):
+                        VemtClient.__parser.print_help()
                     else:
                         await processor.run(args, self, message)
                 else:
@@ -52,7 +53,12 @@ class VemtClient(discord.Client):
             except ShowHelp as e:
                 await message.channel.send(e.help_str)
             except ArgError as e:
-                await message.channel.send(":x: " + str(e))
+                err_str: str = str(e)
+                err_str = err_str.replace("unrecognized arguments:", "不明な引数が指定されました:") \
+                    .replace("invalid choice:", "不正な引数選択です:") \
+                    .replace("choose from", "次のうちから選んでください:") \
+                    .replace("the following arguments are required:", "次の引数は必ず指定してください:")
+                await message.channel.send(":x: " + err_str)
             except SystemExit as e:
                 logger.debug("stopped to exit system.")
             except AuthenticationError as e:
