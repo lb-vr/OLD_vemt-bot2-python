@@ -8,7 +8,18 @@ from src.bot.add_processor import addProcessors
 if __name__ == '__main__':
 
     # setup logger
-    logger = setupLogger("vemt", stdout_level=logging.INFO, logfile_level=logging.DEBUG)
+    logger = setupLogger("vemt", stdout_level=logging.DEBUG, logfile_level=logging.DEBUG)
+
+    # suppress logger
+    for logger_name in (
+        "discord.client",
+        "discord.gateway",
+        "discord.http",
+        "websockets.protocol",
+        "asyncio"
+    ):
+        discord_logger = logging.getLogger(logger_name)
+        discord_logger.setLevel(logging.WARNING)
 
     # setup processor
     addProcessors()

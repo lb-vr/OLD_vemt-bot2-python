@@ -1,56 +1,108 @@
+from typing import Tuple
 
 
 class Definitions:
     """ 定数を定数っぽく扱うためのクラス """
 
-    __kBotCategoryName = "bot"
-    __kContactCategoryName = "contact"
+    __kBotCategoryName: str = "bot"
+    __kContactCategoryName: str = "contact"
 
-    __kBotControlChannelName = "bot-control"
-    __kEntryChannelName = "entry"
-    __kStatusChannelName = "status"
-    __kQueryChannelName = "query"
+    __kBotControlChannelName: str = "bot-control"
+    __kEntryChannelName: str = "entry"
+    __kStatusChannelName: str = "status"
+    __kQueryChannelName: str = "query"
 
-    __kBotAdminRoleName = "BOT-Admin"
-    __kExhibitorRoleName = "Exhibitor"
-    __kManagerRoleName = "Manager"
+    __kBotAdminRoleName: str = "BOT-Admin"
+    __kExhibitorRoleName: str = "Exhibitor"
+    __kManagerRoleName: str = "Manager"
 
     @classmethod
-    @property
-    def BOT_CATEGORY_NAME(cls):
+    def getBotCategoryName(cls) -> str:
         return cls.__kBotCategoryName
 
     @classmethod
-    @property
-    def CONTACT_CATEGORY_NAME(cls):
+    def getBotCategoryKey(cls) -> str:
+        return "category." + cls.getBotCategoryName()
+
+    @classmethod
+    def getContactCategoryName(cls) -> str:
         return cls.__kContactCategoryName
 
     @classmethod
-    @property
-    def BOT_CONTROL_CHANNEL_NAME(cls):
+    def getContactCategoryKey(cls) -> str:
+        return "category." + cls.getContactCategoryName()
+
+    @classmethod
+    def getBotControlChannelName(cls) -> str:
         return cls.__kBotControlChannelName
 
     @classmethod
-    @property
-    def STATUS_CHANNEL_NAME(cls):
+    def getBotControlChannelKey(cls) -> str:
+        return "channel." + cls.getBotControlChannelName()
+
+    @classmethod
+    def getEntryChannelName(cls) -> str:
+        return cls.__kEntryChannelName
+
+    @classmethod
+    def getEntryChannelKey(cls) -> str:
+        return "channel." + cls.getEntryChannelName()
+
+    @classmethod
+    def getStatusChannelName(cls) -> str:
         return cls.__kStatusChannelName
 
     @classmethod
-    @property
-    def QUERY_CHANNEL_NAME(cls):
+    def getStatusChannelKey(cls) -> str:
+        return "channel." + cls.getStatusChannelName()
+
+    @classmethod
+    def getQueryChannelName(cls) -> str:
         return cls.__kQueryChannelName
 
     @classmethod
-    @property
-    def BOT_ADMIN_ROLE_NAME(cls):
+    def getQueryChannelKey(cls) -> str:
+        return "channel." + cls.getQueryChannelName()
+
+    @classmethod
+    def getBotAdminRoleName(cls) -> str:
         return cls.__kBotAdminRoleName
 
     @classmethod
-    @property
-    def EXHIBITOR_ROLE_NAME(cls):
+    def getBotAdminRoleKey(cls) -> str:
+        return "channel." + cls.getBotAdminRoleName()
+
+    @classmethod
+    def getExhibitorRoleName(cls) -> str:
         return cls.__kExhibitorRoleName
 
     @classmethod
-    @property
-    def MANAGER_ROLE_NAME(cls):
+    def getExhibitorRoleKey(cls) -> str:
+        return "role." + cls.getExhibitorRoleName()
+
+    @classmethod
+    def getManagerRoleName(cls) -> str:
         return cls.__kManagerRoleName
+
+    @classmethod
+    def getManagerRoleKey(cls) -> str:
+        return "role." + cls.getManagerRoleName()
+
+    @classmethod
+    def getAllChannels(cls) -> Tuple[str]:
+        return (
+            cls.getBotCategoryName(),
+            cls.getContactCategoryName(),
+            cls.getBotControlChannelName(),
+            cls.getEntryChannelName(),
+            cls.getStatusChannelName(),
+            cls.getQueryChannelName()
+        )
+
+    @classmethod
+    def getAllRoles(cls) -> Tuple[str]:
+        return (
+            cls.getBotAdminRoleName(),
+            cls.getExhibitorRoleName(),
+            cls.getManagerRoleName()
+        )
