@@ -1,8 +1,8 @@
-from .init import InitProcess
-from .exit import ExitProcess
-from .reset import ResetProcess
-from .config import ConfigProcess
-from .help import HelpProcess
+from bot.init import InitProcess
+from bot.exit import ExitProcess
+from bot.reset import ResetProcess
+from bot.config import ConfigProcess
+from bot.help import HelpProcess
 
 
 def addProcessors():

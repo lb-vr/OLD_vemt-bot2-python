@@ -3,7 +3,7 @@ import discord
 import logging
 import sys
 
-from .bot.processor_base import *
+from bot.processor_base import *
 
 
 class VemtClient(discord.Client):

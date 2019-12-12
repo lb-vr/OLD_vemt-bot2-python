@@ -1,6 +1,6 @@
 import discord
 import argparse
-from ..client import VemtClient
+from client import VemtClient
 
 
 class ExitProcess:

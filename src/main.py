@@ -1,9 +1,9 @@
 import argparse
 import logging
 
-from src.setup_log import setupLogger
-from src.client import VemtClient
-from src.bot.add_processor import addProcessors
+from setup_log import setupLogger
+from client import VemtClient
+from bot.add_processor import addProcessors
 
 if __name__ == '__main__':
 
