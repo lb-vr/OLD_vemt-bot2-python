@@ -3,7 +3,8 @@ import discord
 import logging
 import sys
 
-from bot.processor_base import *
+from bot.processor_base import MyArgumentParser, ProcessorBase, ShowHelp
+from bot.processor_base import ProcessorError, ArgError, AuthenticationError, ForbiddenChannelError
 
 
 class VemtClient(discord.Client):
