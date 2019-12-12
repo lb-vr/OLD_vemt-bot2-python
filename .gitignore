@@ -9,6 +9,7 @@ __pycache__/
 
 */*token.txt
 vemt/
+cfg_*.json
 
 # Distribution / packaging
 .Python
