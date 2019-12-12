@@ -3,13 +3,13 @@
     "python.linting.mypyEnabled": true,
     "python.linting.flake8Args": [
         "--max-line-length",
-        "1000"
+        "120"
     ],
     "python.formatting.autopep8Args": [
         "--ignore",
         "E70",
         "--max-line-length",
-        "1000",
+        "120",
     ],
     "editor.formatOnSave": true,
     "python.pythonPath": "w:\\Works\\Programming\\lb\\vemt\\vemt-bot-python\\vemt\\Scripts\\python.exe",
