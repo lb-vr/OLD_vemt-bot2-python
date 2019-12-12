@@ -18,7 +18,7 @@ class ConfigProcess(ProcessorBase):
     parser = None
 
     @classmethod
-    def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
+    def setupSubCommand(cls, subparser: argparse._SubParsersAction):
         cls.parser = subparser.add_parser("+config", help="BOTの設定を変更します")
         cls.parser.set_defaults(handler=ConfigProcess)
         subp = cls.parser.add_subparsers(parser_class=MyArgumentParser)
@@ -45,13 +45,13 @@ class ConfigProcess(ProcessorBase):
         parser_question_add.set_defaults(proc=cls.addOptionalQuestion)
 
     @classmethod
-    async def authenticate(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    async def authenticate(cls, args, client: discord.Client, message: discord.Message):
         # Guildオーナーのみ
         if message.guild.owner.id != message.author.id:
             raise AuthenticationError("+init command is permitted for guild owner.")
 
     @classmethod
-    async def uploadQuestion(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    async def uploadQuestion(cls, args, client: discord.Client, message: discord.Message):
         cls.__logger.debug("start to upload Question.")
         if len(message.attachments) != 1:
             raise ProcessorError("jsonファイルが添付されていないか、複数添付されています")
@@ -93,11 +93,11 @@ class ConfigProcess(ProcessorBase):
         cls.__logger.info("uploadQuestion")
 
     @classmethod
-    async def addOptionalQuestion(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    async def addOptionalQuestion(cls, args, client: discord.Client, message: discord.Message):
         cls.__logger.info("addOptionalQuestion")
 
     @classmethod
-    async def run(cls, args, client, message: discord.Message) -> NoReturn:
+    async def run(cls, args, client, message: discord.Message):
         if hasattr(args, "proc"):
             await args.proc(args, client, message)
         else:

@@ -13,16 +13,16 @@ from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationErro
 class ResetProcess(ProcessorBase):
 
     @classmethod
-    def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
+    def setupSubCommand(cls, subparser: argparse._SubParsersAction):
         parser = subparser.add_parser("+reset", help="【BOT開発専用】Discordサーバーをもとの状態に戻します", add_help=False)
         parser.set_defaults(handler=ResetProcess)
 
     @classmethod
-    async def authenticate(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    async def authenticate(cls, args, client: discord.Client, message: discord.Message):
         pass
 
     @classmethod
-    async def run(cls, args, client, message: discord.Message) -> NoReturn:
+    async def run(cls, args, client, message: discord.Message):
         await message.channel.send('Discordサーバーをもとに戻しています')
 
         if not message.guild:

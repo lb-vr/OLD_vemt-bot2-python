@@ -16,7 +16,7 @@ class InitProcess(ProcessorBase):
     parser = None
 
     @classmethod
-    def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
+    def setupSubCommand(cls, subparser: argparse._SubParsersAction):
         cls.parser = subparser.add_parser("+init",
                                           help="Discordサーバーを初期化します",
                                           description="Discordサーバーにおいて、チャンネル、ロールなどを作成します。\n"
@@ -25,7 +25,7 @@ class InitProcess(ProcessorBase):
         cls.parser.set_defaults(handler=InitProcess)
 
     @classmethod
-    async def authenticate(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    async def authenticate(cls, args, client: discord.Client, message: discord.Message):
         # Guildオーナーのみ
         if message.guild:
             if message.guild.owner.id != message.author.id:
@@ -34,7 +34,7 @@ class InitProcess(ProcessorBase):
             raise ForbiddenChannelError("+initコマンドはサーバーのテキストチャンネルのみで実行可能です")
 
     @classmethod
-    async def run(cls, args, client, message: discord.Message) -> NoReturn:
+    async def run(cls, args, client, message: discord.Message):
         cls.__logger.info("Start to initialize discord server.")
         await message.channel.send('Discordサーバーを初期化します\n初期化中はサーバー設定の変更や、別のコマンドの発行をしないでください')
 

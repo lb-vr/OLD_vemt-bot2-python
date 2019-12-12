@@ -56,15 +56,15 @@ class MyArgumentParser(argparse.ArgumentParser):
 class ProcessorBase(metaclass=abc.ABCMeta):
     @classmethod
     @abc.abstractmethod
-    def setupSubCommand(cls, subparser: argparse._SubParsersAction) -> NoReturn:
+    def setupSubCommand(cls, subparser: argparse._SubParsersAction):
         pass
 
     @classmethod
     @abc.abstractmethod
-    def authenticate(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    def authenticate(cls, args, client: discord.Client, message: discord.Message):
         pass
 
     @classmethod
     @abc.abstractmethod
-    def run(cls, args, client: discord.Client, message: discord.Message) -> NoReturn:
+    def run(cls, args, client: discord.Client, message: discord.Message):
         pass
