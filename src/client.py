@@ -2,6 +2,7 @@ import argparse
 import discord
 import logging
 import sys
+import shlex
 
 from bot.processor_base import MyArgumentParser, ProcessorBase, ShowHelp
 from bot.processor_base import ProcessorError, ArgError, AuthenticationError, ForbiddenChannelError
@@ -36,7 +37,7 @@ class VemtClient(discord.Client):
         if (not message.author.bot and message.content.startswith("+")):
             logger.debug('Message from {0.author} ({0.author.id}): {0.content}'.format(message))
             try:
-                args = VemtClient.__parser.parse_args(message.content.split())
+                args = VemtClient.__parser.parse_args(shlex.split(message.content))
                 logger.debug("arguments : %s", args)
 
                 if hasattr(args, "handler"):
