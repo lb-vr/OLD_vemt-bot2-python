@@ -45,10 +45,11 @@ class VemtClient(discord.Client):
                     await processor.authenticate(args, self, message)
                     if hasattr(args, "help") and args.help and hasattr(processor, "parser"):
                         await message.channel.send(processor.parser.format_help())
-                    elif hasattr(args, "show_help") and not hasattr(args, "help_on_help"):
-                        VemtClient.__parser.print_help()
                     else:
-                        await processor.run(args, self, message)
+                        if hasattr(args, "show_help") and not args.help_on_help:
+                            VemtClient.__parser.print_help()
+                        else:
+                            await processor.run(args, self, message)
                 else:
                     raise ProcessorError("そのようなコマンドは存在しません")
 
