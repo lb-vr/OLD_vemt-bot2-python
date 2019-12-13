@@ -7,7 +7,7 @@ from bot.const import Definitions
 from bot_config import Config
 from client import VemtClient
 
-from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError
+from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, ForbiddenChannelError
 
 
 class ResetProcess(ProcessorBase):
@@ -19,7 +19,10 @@ class ResetProcess(ProcessorBase):
 
     @classmethod
     async def authenticate(cls, args, client: discord.Client, message: discord.Message):
-        pass
+        if message.guild is None:
+            raise ForbiddenChannelError("+resetコマンドはサーバーのテキストチャンネルでのみ実行可能です")
+        if message.guild.owner.id != message.author.id:
+            raise AuthenticationError("+resetコマンドはサーバーのオーナーのみが発行可能です")
 
     @classmethod
     async def run(cls, args, client, message: discord.Message):

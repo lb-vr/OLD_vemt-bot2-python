@@ -17,6 +17,10 @@ class Definitions:
     __kManagerRoleName: str = "Manager"
 
     @classmethod
+    def getGuildIdKey(cls) -> str:
+        return "guild.id"
+
+    @classmethod
     def getBotCategoryName(cls) -> str:
         return cls.__kBotCategoryName
 

@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Optional, Any, NoReturn
+from typing import Optional, Any
 
 
 class Config:
@@ -17,12 +17,12 @@ class Config:
                 return self.__cfg[key]
         return defval
 
-    def setVal(self, key: str, value, save: bool = True) -> NoReturn:
+    def setVal(self, key: str, value, save: bool = True):
         self.__cfg[key] = value
         if save:
             self.save()
 
-    def save(self) -> NoReturn:
+    def save(self):
         with open(self.__cfg_fname, mode="w", encoding="utf-8") as f:
             json.dump(self.__cfg, f)
 

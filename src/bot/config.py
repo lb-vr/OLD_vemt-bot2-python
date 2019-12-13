@@ -9,7 +9,7 @@ from bot.const import Definitions
 from bot_config import Config
 from client import VemtClient
 
-from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, MyArgumentParser
+from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, MyArgumentParser, ForbiddenChannelError
 
 
 class ConfigProcess(ProcessorBase):
@@ -38,7 +38,8 @@ class ConfigProcess(ProcessorBase):
                                                        description="新しい質問を、既存の質問の末尾に追加します。\n追加できる質問はすべて**任意回答**となります。")
         parser_question_add.add_argument("text", type=str, help="簡潔な質問文")
         parser_question_add.add_argument("--details", nargs="+", type=str, help="質問文の補足などを行います。行ごとに空白で区切ってください。")
-        parser_question_add.add_argument("--type", type=str, default="string", choices=["string", "number", "picture", "regex", "json"], help="期待する回答の種類を指定します")
+        parser_question_add.add_argument("--type", type=str, default="string",
+                                         choices=["string", "number", "picture", "regex", "json"], help="期待する回答の種類を指定します")
         parser_question_add.add_argument("--choise", type=str, nargs="+", default=[], help="回答を選択式にします")
         parser_question_add.add_argument("--length", type=int, default=200, help="回答の最大文字数を入力します")
         parser_question_add.add_argument("--regex_rule", type=str, default=".+", help="回答を受理する正規表現を指定します")
@@ -46,9 +47,15 @@ class ConfigProcess(ProcessorBase):
 
     @classmethod
     async def authenticate(cls, args, client: discord.Client, message: discord.Message):
+        # そもそもGuild上か
+        if message.guild is None:
+            raise ForbiddenChannelError("コマンドはDiscordサーバーにて発行してください")
         # Guildオーナーのみ
         if message.guild.owner.id != message.author.id:
             raise AuthenticationError("+init command is permitted for guild owner.")
+        # サーバーが既に初期化されているか
+        if Config.getConfig(message.guild.id).getVal(Definitions.getGuildIdKey) is None:
+            raise ProcessorError("このサーバーはまだ初期化されていません")
 
     @classmethod
     async def uploadQuestion(cls, args, client: discord.Client, message: discord.Message):
@@ -56,8 +63,6 @@ class ConfigProcess(ProcessorBase):
         if len(message.attachments) != 1:
             raise ProcessorError("jsonファイルが添付されていないか、複数添付されています")
 
-        error_msgs: List[str] = []
-        question_header: Dict[str] = {}
         try:
             json_bytes = await message.attachments[0].read()
             json_str = json_bytes.decode("utf-8")
@@ -150,7 +155,8 @@ class ConfigProcess(ProcessorBase):
                     if itm["type"] in ["string", "number", "picture", "regex", "json"]:
                         q_item["type"] = itm["type"]
                     else:
-                        error_msgs.append(str(index) + "問目:項目\"type\"はstring, number, picture, regex, jsonの中から選択する必要があります")
+                        error_msgs.append(
+                            str(index) + "問目:項目\"type\"はstring, number, picture, regex, jsonの中から選択する必要があります")
                 else:
                     error_msgs.append(str(index) + "問目:項目\"items\"には、\"type\"が必ず必要です")
 

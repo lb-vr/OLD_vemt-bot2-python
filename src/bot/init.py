@@ -142,6 +142,7 @@ class InitProcess(ProcessorBase):
         # サーバー固有のIDを記録する
         cls.__logger.debug("- Registing IDs.")
         cfg: Config = Config.getConfig(guild.id)
+        cfg.setVal(Definitions.getGuildIdKey(), guild.id)
         cfg.setVal(Definitions.getBotCategoryKey(), bot_category.id)
         cfg.setVal(Definitions.getContactCategoryKey(), contact_category.id)
         cfg.setVal(Definitions.getBotControlChannelKey(), bot_manage_channel.id)

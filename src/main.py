@@ -21,13 +21,14 @@ if __name__ == '__main__':
         discord_logger = logging.getLogger(logger_name)
         discord_logger.setLevel(logging.WARNING)
 
-    # setup processor
-    addProcessors()
-
     # TODO: ここに説明を書く
     parser = argparse.ArgumentParser()
     parser.add_argument("--token", default="config/discord_token.txt", type=str, help="Filepath of token file.")
+    parser.add_argument("--dev", action="store_true", help="enable developing mode.")
     args = parser.parse_args()
+
+    # setup processor
+    addProcessors(args.dev)
 
     # load token
     token_str: str = ""

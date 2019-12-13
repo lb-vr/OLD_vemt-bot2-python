@@ -5,9 +5,11 @@ from bot.config import ConfigProcess
 from bot.help import HelpProcess
 
 
-def addProcessors():
+def addProcessors(is_dev: bool = False):
     InitProcess.addProcessor()
-    ExitProcess.addProcessor()
-    ResetProcess.addProcessor()
+    if is_dev:
+        ExitProcess.addProcessor()
+        ResetProcess.addProcessor()
+
     ConfigProcess.addProcessor()
     HelpProcess.addProcessor()
