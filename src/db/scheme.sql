@@ -5,6 +5,9 @@ DROP TABLE IF EXISTS question_items;
 DROP TABLE IF EXISTS results;
 DROP TABLE IF EXISTS submissions;
 DROP TABLE IF EXISTS entries;
+DROP TABLE IF EXISTS registry_int;
+DROP TABLE IF EXISTS registry_string;
+DROP TABLE IF EXISTS registry_datetime;
 
 PRAGMA foreign_keys = ON;
 

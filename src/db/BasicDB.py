@@ -1,15 +1,15 @@
 import sqlite3
 
-class BasicDB():
-    __database = None
-    __connection = None
-    __cursor = None
 
-    def __init__(self, database:str):
+class BasicDB():
+    # __database = None
+    # __connection = None
+    # __cursor = None
+
+    def __init__(self, database: str):
         self.__database = database
         self.__connection = sqlite3.connect(self.__database)
 
-    @classmethod
     def getCursor(self):
         if(self.__cursor is None):
             if (self.__database is not None) and (self.__connection is not None):
