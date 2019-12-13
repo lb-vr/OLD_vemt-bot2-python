@@ -9,6 +9,7 @@ __pycache__/
 
 */*token.txt
 vemt/
+*.db
 cfg_*.json
 
 # Distribution / packaging

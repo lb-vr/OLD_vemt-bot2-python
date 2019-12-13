@@ -1,6 +1,8 @@
 import discord
 import argparse
 import logging
+import subprocess
+import os
 
 from typing import NoReturn, List, Tuple, Optional
 
@@ -138,6 +140,11 @@ class InitProcess(ProcessorBase):
             }
         )
         cls.__logger.info("- Created channels.")
+
+        # DBを作成
+        db_proc = subprocess.Popen("sqlite3 {} < {}".format(Definitions.getDatabaseFilename(
+            guild.id), os.path.abspath("src/db/scheme.sql")), shell=True)
+        db_proc.wait()
 
         # サーバー固有のIDを記録する
         cls.__logger.debug("- Registing IDs.")

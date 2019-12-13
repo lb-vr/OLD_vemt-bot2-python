@@ -21,6 +21,10 @@ class Definitions:
         return "guild.id"
 
     @classmethod
+    def getDatabaseFilename(cls, guild_id: int):
+        return "db_" + str(guild_id) + ".db"
+
+    @classmethod
     def getBotCategoryName(cls) -> str:
         return cls.__kBotCategoryName
 
