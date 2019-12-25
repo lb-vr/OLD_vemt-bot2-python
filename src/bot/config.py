@@ -1,3 +1,4 @@
+from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, MyArgumentParser, ForbiddenChannelError
 import discord
 import argparse
 import logging
@@ -8,8 +9,7 @@ from typing import NoReturn, List, Tuple, Optional, Dict
 from bot.const import Definitions
 from bot_config import Config
 from client import VemtClient
-
-from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, MyArgumentParser, ForbiddenChannelError
+from question import Question
 
 
 class ConfigProcess(ProcessorBase):
@@ -70,16 +70,17 @@ class ConfigProcess(ProcessorBase):
             json_obj = json.loads(json_str)
             cls.__logger.debug("- json parsed.")
 
-            question, errors = cls.parseQuestionJson(json_obj)
+            question: Optional[Question] = None
+            try:
+                question = Question.loadFromJson(json_obj)
+                if question is None:
+                    raise ProcessorError("質問が生成されないエラー")
+            except Exception as e:
+                cls.__logger.error("Parse error. %s", e)
+                raise ProcessorError("質問jsonのパースに失敗しました。%s", e)
 
             # ロギング
             cls.__logger.debug("- loaded json.")
-
-            if len(errors) > 0:
-                error_msg = "\n".join(errors)
-                raise ProcessorError("質問設定にエラーがありました。以下はエラーの詳細です。\n" + error_msg)
-
-            cls.__logger.debug("- parsed json successfully.")
 
             if not args.preview:
                 # Databaseに登録
@@ -87,13 +88,15 @@ class ConfigProcess(ProcessorBase):
                 # TODO
 
             # プレビューデータを表示
-
+            texts = [question.getHeaderText()] + question.getQuestionText()
+            for t in texts:
+                await message.channel.send(t)
             print(question)
 
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError:
             raise ProcessorError("jsonファイルの文字エンコードはUTF-8にしてください")
         except json.JSONDecodeError as e:
-            raise ProcessError("json文法にエラーがあります\n{0.msg} ({0.lineno}行, {0.colno}列)".format(e))
+            raise ProcessorError("json文法にエラーがあります\n{0.msg} ({0.lineno}行, {0.colno}列)".format(e))
 
         cls.__logger.info("uploadQuestion")
 
@@ -111,124 +114,3 @@ class ConfigProcess(ProcessorBase):
     @classmethod
     def addProcessor(cls):
         VemtClient.addSubCommand(ConfigProcess)
-
-    @classmethod
-    def parseQuestionJson(cls, json_obj: dict) -> Tuple[dict, List[str]]:
-        """ 質問をまとめたjsonのエラーチェックする """
-        # エラーチェック
-        question: dict = {}
-        error_msgs: List[str] = []
-        cls.__logger.debug("-- Parsing question json.")
-        if "title" in json_obj:
-            question["title"] = json_obj["title"]
-        else:
-            error_msgs.append("項目\"title\"がありません")
-
-        question["description"] = ""
-        if "descriptions" in json_obj:
-            if type(json_obj["descriptions"]) is list:
-                for dline in json_obj["descriptions"]:
-                    if type(dline) is str:
-                        question["description"] += dline + "\n"
-                    else:
-                        error_msgs.append("項目\"description\"は文字列である必要があります")
-                        break
-            else:
-                error_msgs.append("項目\"description\"は行ごとのリストである必要があります")
-
-        cls.__logger.debug("-- Parsed question header json.")
-        index = 1
-        if "items" in json_obj:
-            question["items"] = []
-            for itm in json_obj["items"]:
-                # text
-                q_item: dict = {}
-                q_item["text"] = ""
-                if "text" in itm:
-                    q_item["text"] = itm["text"]
-                else:
-                    error_msgs.append(str(index) + "問目:項目\"items\"には、\"text\"が必ず必要です")
-
-                # type
-                itm["type"] = "string"
-                if "type" in itm:
-                    if itm["type"] in ["string", "number", "picture", "regex", "json"]:
-                        q_item["type"] = itm["type"]
-                    else:
-                        error_msgs.append(
-                            str(index) + "問目:項目\"type\"はstring, number, picture, regex, jsonの中から選択する必要があります")
-                else:
-                    error_msgs.append(str(index) + "問目:項目\"items\"には、\"type\"が必ず必要です")
-
-                # length
-                q_item["length"] = 200
-                if "length" in itm:
-                    if type(itm["length"]) is int:
-                        if 0 < itm["length"] and itm["length"] <= 200:
-                            q_item["length"] = itm["length"]
-                        else:
-                            error_msgs.append(str(index) + "問目:項目\"length\"には、1文字以上、200文字以下を指定してください")
-                    else:
-                        error_msgs.append(str(index) + "問目:項目\"length\"には、回答文字列の制限長を整数で入力する必要があります")
-
-                # choise
-                q_item["choise"] = None
-                if "choise" in itm:
-                    if type(itm["choise"]) is list:
-                        if len(itm["choise"]) > 1:
-                            q_item["choise"]: List[str] = []
-                            for c in itm["choise"]:
-                                if type(c) is str:
-                                    q_item["choise"].append(c)
-                                else:
-                                    error_msgs.append(str(index) + "問目:選択肢\"choise\"は文字列のみです ({})".format(c))
-                        else:
-                            error_msgs.append(str(index) + "問目:選択肢\"choise\"は2つ以上用意しなければなりません")
-                    else:
-                        error_msgs.append(str(index) + "問目:選択肢\"choise\"はリストを指定します")
-
-                # is_required
-                q_item["is_required"] = False
-                if "is_required" in itm:
-                    if type(itm["is_required"]) is bool:
-                        q_item["is_required"] = itm["is_required"]
-                    else:
-                        error_msgs.append(str(index) + "問目:項目\"is_required\"はboolean型です")
-
-                # regex_rule
-                q_item["regex_rule"] = ".+"
-                if "regex_rule" in itm:
-                    if type(itm["regex_rule"]) is str:
-                        q_item["regex_rule"] = itm["regex_rule"]
-                    else:
-                        error_msgs.append(str(index) + "問目:項目\"regex\"は文字列です")
-
-                # limit_phase
-                q_item["limit_phase"] = None
-                if "limit_phase" in itm:
-                    if type(itm["limit_phase"]) is str:
-                        if itm["limit_phase"] in ["entry", "submit", "publish"]:
-                            q_item["limit_phase"] = itm["limit_phase"]
-                        else:
-                            error_msgs.append(str(index) + "問目:項目\"limit_phase\"はentry, submit, publishから選んでください")
-                    else:
-                        error_msgs.append(str(index) + "問目:項目\"limit_phase\"はentry, submit, publishから選んでください")
-                if q_item["is_required"] and q_item["limit_phase"] is None:
-                    error_msgs.append(str(index) + "問目:項目\"is_required\"がTrueの場合は、項目\"limit_phase\"は必須です")
-
-                # limit_datetime
-                q_item["limit_datetime"] = None
-                if "limit_datetime" in itm:
-                    if type(itm["limit_datetime"]) is str:
-                        # ここでlimit-datetimeのフォーマットをチェック
-                        # 時間がdatetimeの、現在以降であることをチェック
-                        q_item["limit_datetime"] = itm["limit_datetime"]  # 日付
-                    else:
-                        error_msgs.append(str(index) + "問目:項目\"limit_datetime\"は文字列で指定してください")
-                question["items"].append(q_item)
-
-                cls.__logger.debug("-- Parsed [%d] question item.")
-                index += 1
-
-        cls.__logger.info("-- Parsed question json. %d errors.", len(error_msgs))
-        return (question, error_msgs)
