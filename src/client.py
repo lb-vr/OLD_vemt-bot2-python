@@ -36,6 +36,7 @@ class VemtClient(discord.Client):
 
         if (not message.author.bot and message.content.startswith("+")):
             logger.debug('Message from {0.author} ({0.author.id}): {0.content}'.format(message))
+            logger.debug('Guild: {0.guild.id}'.format(message))
             try:
                 args = VemtClient.__parser.parse_args(shlex.split(message.content))
                 logger.debug("arguments : %s", args)

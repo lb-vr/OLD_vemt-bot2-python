@@ -54,7 +54,7 @@ class ConfigProcess(ProcessorBase):
         if message.guild.owner.id != message.author.id:
             raise AuthenticationError("+init command is permitted for guild owner.")
         # サーバーが既に初期化されているか
-        if Config.getConfig(message.guild.id).getVal(Definitions.getGuildIdKey) is None:
+        if Config.getConfig(message.guild.id).getVal(Definitions.getGuildIdKey()) is None:
             raise ProcessorError("このサーバーはまだ初期化されていません")
 
     @classmethod
@@ -76,8 +76,8 @@ class ConfigProcess(ProcessorBase):
                 if question is None:
                     raise ProcessorError("質問が生成されないエラー")
             except Exception as e:
-                cls.__logger.error("Parse error. %s", e)
-                raise ProcessorError("質問jsonのパースに失敗しました。%s", e)
+                cls.__logger.error("Parse error. %s (%s)", e, str(type(e)))
+                raise ProcessorError("質問jsonのパースに失敗しました。")
 
             # ロギング
             cls.__logger.debug("- loaded json.")

@@ -12,12 +12,18 @@ class Config:
             self.__cfg = json.load(f)
 
     def getVal(self, key: str, defval: Optional[Any] = None, type_: Optional[type] = None):
+        assert type(key) is str, "key must be string."
+
         if key in self.__cfg:
-            if not type_ and type(self.__cfg[key]) is type_:
+            if type_ is None:
+                return self.__cfg[key]
+            elif type(self.__cfg[key]) is type_:
                 return self.__cfg[key]
         return defval
 
     def setVal(self, key: str, value, save: bool = True):
+        assert type(key) is str, "key must be string."
+
         self.__cfg[key] = value
         if save:
             self.save()
