@@ -4,8 +4,6 @@ import logging
 
 from typing import NoReturn, List, Tuple, Optional
 
-from bot.const import Definitions
-from bot_config import Config
 from client import VemtClient
 
 from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError

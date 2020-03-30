@@ -2,9 +2,6 @@ import abc
 import argparse
 import discord
 import logging
-import sys
-
-from typing import NoReturn
 
 
 class ArgError(Exception):
@@ -27,10 +24,21 @@ class AuthenticationError(Exception):
         logging.getLogger("AuthenticationError").error(message)
 
 
+class PeriodError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+        logging.getLogger("PeriodError").error(message)
+
+
 class ForbiddenChannelError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
+        self.__message = message
         logging.getLogger("ForbiddenChannelError").error(message)
+
+    @property
+    def msg(self) -> str:
+        return self.__message
 
 
 class ProcessorError(Exception):

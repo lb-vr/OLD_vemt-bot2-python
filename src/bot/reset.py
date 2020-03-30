@@ -3,11 +3,15 @@ import argparse
 
 from typing import NoReturn, List, Tuple, Optional
 
-from bot.const import Definitions
-from bot_config import Config
+# from bot.const import Definitions
 from client import VemtClient
+from definitions import CategoryName, ChannelName, RoleName
 
 from bot.processor_base import ProcessorBase, ProcessorError, AuthenticationError, ForbiddenChannelError
+
+from db.user.entries import Entries
+from db.database import Database
+from db.utility import getDBFilepath
 
 
 class ResetProcess(ProcessorBase):
@@ -35,15 +39,24 @@ class ResetProcess(ProcessorBase):
         # 作成済みのチャンネルを削除
         # あえて名前一致で削除する
         current_channels: List[discord.TextChannel] = guild.channels
-        def_channels: Tuple[str] = Definitions.getAllChannels()
+        def_channels: List[str] = ChannelName.getAll() + CategoryName.getAll()
         for ch in current_channels:
             for dc in def_channels:
                 if ch.name == dc:
                     await ch.delete()
 
-        # 作成済みのチャンネルを削除
+        # コンタクトチャンネル
+        with Database(getDBFilepath(message.guild.id)) as db:
+            def_contact_channels: List[str] = \
+                [item["contact_channel_id"] for item in db.select("entries", columns=["contact_channel_id"])]
+            for ch in current_channels:
+                for dc in def_contact_channels:
+                    if ch.name == dc:
+                        await ch.delete()
+
+        # 作成済みのロールを削除
         current_roles: List[discord.Role] = guild.roles
-        def_roles: Tuple[str] = Definitions.getAllRoles()
+        def_roles: Tuple[str] = RoleName.getAll()
         for rl in current_roles:
             for drl in def_roles:
                 if rl.name == drl:
@@ -51,10 +64,6 @@ class ResetProcess(ProcessorBase):
 
         # ニックネーム戻す
         await guild.me.edit(nick=None)
-
-        # Json削除
-        Config.remove(guild.id)
-
         await message.channel.send("**成功** サーバーをもとに戻しました\n")
 
     @classmethod

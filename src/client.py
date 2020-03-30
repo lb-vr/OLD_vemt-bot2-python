@@ -68,6 +68,9 @@ class VemtClient(discord.Client):
             except AuthenticationError as e:
                 await message.channel.send(":x: **失敗** このコマンドを実行する権限がありません")
             except ForbiddenChannelError as e:
-                await message.channel.send(":x: **失敗** このチャンネルではこのコマンドを実行できません")
+                if e.msg != "":
+                    await message.channel.send(":x: **失敗** " + e.msg)
+                else:
+                    await message.channel.send(":x: **失敗** このチャンネルではこのコマンドを実行できません")
             except ProcessorError as e:
                 await message.channel.send(":x: **失敗** " + str(e))
